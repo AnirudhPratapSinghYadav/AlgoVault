@@ -60,7 +60,7 @@ export default function Access() {
           alt="Flood plains aerial at dawn"
           className="absolute inset-0 w-full h-full object-cover access-hero-img"
         />
-        <motion.div className="absolute inset-0 bg-[#0c0f0e]/30 pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 bg-[#0c0f0e]/30 pointer-events-none" aria-hidden />
         <div className="absolute bottom-6 left-6 right-6 max-w-sm p-5 bg-bg-surface border-l-[3px] border-l-accent-primary">
           <p className="font-mono text-[10px] uppercase tracking-label text-text-tertiary">Operations snapshot</p>
           <ul className="mt-3 space-y-2 text-xs font-mono">
