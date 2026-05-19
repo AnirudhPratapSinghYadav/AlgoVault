@@ -81,7 +81,12 @@ body {
   }
 
   .cinema-img {
-    filter: saturate(0.72) contrast(0.95) brightness(0.78);
+    filter: saturate(0.88) contrast(1.02) brightness(1.12);
+  }
+
+  /* Access page — left panel flood aerial (brighter image, lighter scrim) */
+  .access-hero-img {
+    filter: saturate(1) contrast(1.06) brightness(1.35);
   }
 
   .hero-scrim {

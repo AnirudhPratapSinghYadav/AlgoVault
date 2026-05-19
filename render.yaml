@@ -1,0 +1,59 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# After deploy: set PUBLIC_APP_URL + ALLOWED_ORIGINS to your Vercel URL.
+
+services:
+  - type: web
+    name: algovault-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:server
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GNEWS_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: PUBLIC_APP_URL
+        sync: false
+      - key: BOT_PORT
+        value: "3002"
+
+  - type: web
+    name: algovault-web
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_NETWORK
+        value: testnet
+      - key: VITE_DISASTER_APP_ID
+        value: "762592323"
+      - key: VITE_APPEALS_APP_ID
+        value: "762592091"
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: algovault-api
+          type: web
+          property: host
+        # Renders as https://algovault-api.onrender.com — set in dashboard if blueprint linking fails
+
+  - type: worker
+    name: algovault-telegram
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run services
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: PUBLIC_APP_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

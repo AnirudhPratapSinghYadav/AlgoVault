@@ -1,3 +1,5 @@
+import { apiUrl } from '../lib/apiBase'
+
 /**
  * Gora Oracle integration — live disaster signals for ops ingestion.
  *
@@ -38,7 +40,7 @@ async function fetchGdacs(): Promise<LiveDisasterSignal[]> {
     return data.events.map((e) => ({ ...e, source: e.source || 'Gora Oracle' }))
   }
 
-  const res = await fetch('/api/disaster-intel')
+  const res = await fetch(apiUrl('/api/disaster-intel'))
   if (!res.ok) throw new Error(`GDACS feed unavailable (${res.status})`)
   const body = (await res.json()) as { events?: Array<Record<string, unknown>> }
   const events = body.events ?? []

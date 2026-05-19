@@ -234,19 +234,19 @@ function StoryScrim({ alignRight, heavy }: { alignRight: boolean; heavy?: boolea
     <>
       <div
         className={`absolute inset-0 z-[1] pointer-events-none ${
-          heavy ? 'bg-[#1c2320]/68' : 'bg-[#1c2320]/58'
+          heavy ? 'bg-[#1c2320]/38' : 'bg-[#1c2320]/32'
         }`}
         aria-hidden
       />
       <div
         className={`absolute inset-0 z-[1] pointer-events-none ${
           alignRight
-            ? 'bg-gradient-to-l from-[#1c2320]/92 via-[#1c2320]/72 to-transparent'
-            : 'bg-gradient-to-r from-[#1c2320]/92 via-[#1c2320]/72 to-transparent'
+            ? 'bg-gradient-to-l from-[#1c2320]/72 via-[#1c2320]/48 to-transparent'
+            : 'bg-gradient-to-r from-[#1c2320]/72 via-[#1c2320]/48 to-transparent'
         }`}
         aria-hidden
       />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#1c2320]/90 via-transparent to-[#1c2320]/55 pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#1c2320]/62 via-transparent to-[#1c2320]/35 pointer-events-none" aria-hidden />
     </>
   )
 }
@@ -345,8 +345,8 @@ export default function Landing() {
       {/* PROLOGUE */}
       <section className="relative z-10 min-h-[100svh] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden isolate">
         <BackgroundMedia src={DOC.biharRooftops} alt="Flood-affected village in Bihar" />
-        <div className="absolute inset-0 z-[1] bg-[#1c2320]/52 pointer-events-none" aria-hidden />
-        <div className="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_90%_70%_at_50%_45%,transparent_0%,#1c2320_72%)] pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 z-[1] bg-[#1c2320]/28 pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_90%_70%_at_50%_45%,transparent_0%,#1c2320_48%)] pointer-events-none" aria-hidden />
 
         <motion.div
           className="relative z-10 w-full max-w-4xl mx-auto landing-hero-panel px-6 sm:px-10 py-10 sm:py-14 text-center mt-16"

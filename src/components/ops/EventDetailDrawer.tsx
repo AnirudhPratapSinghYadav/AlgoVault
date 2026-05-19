@@ -7,6 +7,7 @@ import { Button } from '../ui'
 import { getLoraApplicationUrl } from '../../services/humanitarianExplorer'
 import { severityDisplayLabel, severityBadgeClass, campaignStatusLabel } from '../../lib/severityLabels'
 import { DEMO_CORE_FOCUS } from '../../config/demoFocus'
+import { apiUrl } from '../../lib/apiBase'
 
 interface FloodForecast {
   available: boolean
@@ -150,7 +151,7 @@ export default function EventDetailDrawer({
     })
     if (event.evidenceUrl) params.set('evidenceUrl', event.evidenceUrl)
 
-    fetch(`/api/event-brief?${params}`, { signal: controller.signal })
+    fetch(`${apiUrl('/api/event-brief')}?${params}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error('unavailable'))))
       .then((data: EventBrief) => {
         if (data?.error === 'brief_unavailable' || !data?.summary) {
@@ -180,7 +181,7 @@ export default function EventDetailDrawer({
     if (event.longitude != null) params.set('lon', String(event.longitude))
     params.set('severity', event.severity)
     if (event.alertScore != null) params.set('alertScore', String(event.alertScore))
-    void fetch(`/api/flood-forecast?${params}`)
+    void fetch(`${apiUrl('/api/flood-forecast')}?${params}`)
       .then((r) => r.json() as Promise<FloodForecast>)
       .then(setFlood)
       .catch(() => setFlood(null))

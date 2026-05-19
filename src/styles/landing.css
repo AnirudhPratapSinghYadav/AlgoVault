@@ -57,6 +57,7 @@
   transform-origin: center center;
   animation: landing-media-zoom 32s ease-out forwards;
   will-change: transform;
+  filter: saturate(0.92) contrast(1.04) brightness(1.15);
 }
 
 .landing-root .landing-orb {

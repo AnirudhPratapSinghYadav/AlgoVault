@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getGdacsLastFetch } from '../lib/gdacsSyncState'
+import { apiUrl } from '../lib/apiBase'
 
 export interface SystemStatus {
   gdacsLive: boolean
@@ -32,7 +33,7 @@ export function useSystemStatus(networkBlock: number): SystemStatus {
 
   const refresh = useCallback(async () => {
     try {
-      const r = await fetch('/api/alert-status')
+      const r = await fetch(apiUrl('/api/alert-status'))
       if (r.ok) {
         const d = (await r.json()) as { alertService?: boolean; telegram?: boolean; running?: boolean }
         setAlertService(Boolean(d.alertService ?? d.running))

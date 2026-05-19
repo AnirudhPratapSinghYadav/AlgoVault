@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { apiUrl } from '../lib/apiBase'
 import { useShallow } from 'zustand/react/shallow'
 import { persist } from 'zustand/middleware'
 import type { Crisis, CrisisCategory, CrisisVerifier } from '../types/crisis'
@@ -245,7 +246,7 @@ export const usePlatformStore = create<PlatformState>()(
         set((s) => ({
           campaignOpsMeta: { ...s.campaignOpsMeta, [meta.onChainCampaignId]: meta },
         }))
-        void fetch('/api/campaign-meta', {
+        void fetch(apiUrl('/api/campaign-meta'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(meta),
