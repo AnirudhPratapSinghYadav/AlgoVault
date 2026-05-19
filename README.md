@@ -441,7 +441,7 @@ npm run verify:deployment
 
 Built for **AlgoBharat Hack Series 3.0 — Round 3** (AlgoHack India 2026).
 
-**Team:** AlgoVault — humanitarian ops on Algorand.
+**Team:** Bharat- Anirudh Pratap Singh Yadav
 
 ---
 
