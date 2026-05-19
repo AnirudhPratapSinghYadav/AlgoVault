@@ -6,6 +6,7 @@
   "scripts": {
     "wallets:generate": "tsx scripts/generate_demo_wallets.ts",
     "start:server": "tsx server/event-brief-server.ts",
+    "start:service": "npm run start:server",
     "alert:service": "tsx scripts/bot/alertService.ts",
     "services": "npx concurrently -k -n alerts,guardian -c yellow,magenta \"npm run alert:service\" \"npm run bot\"",
     "dev": "vite",

@@ -14,7 +14,7 @@
 
 1. [render.com](https://render.com) → **New Web Service** → connect GitHub repo.
 2. **Build:** `npm install`  
-3. **Start:** `npm run start:server`  
+3. **Start:** `npm run start:server` (not `start:service` — that was a common typo; both work now)  
 4. **Health check path:** `/health`
 5. Environment variables:
 
