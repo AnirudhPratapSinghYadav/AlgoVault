@@ -52,6 +52,21 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true })
 })
 
+app.get('/api/alert-status', async (_req, res) => {
+  const botPort = process.env.BOT_PORT || '3002'
+  try {
+    const r = await fetch(`http://127.0.0.1:${botPort}/bot/health`, { signal: AbortSignal.timeout(2500) })
+    const h = (await r.json()) as { telegram?: boolean; polling?: boolean }
+    res.json({
+      running: true,
+      alertService: Boolean(h.telegram),
+      telegram: Boolean(h.polling),
+    })
+  } catch {
+    res.json({ running: false, alertService: false, telegram: false })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Event brief API listening on http://localhost:${PORT}`)
 })

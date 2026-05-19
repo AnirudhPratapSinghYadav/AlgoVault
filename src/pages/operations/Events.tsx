@@ -4,14 +4,14 @@ import { useWallet } from '@txnlab/use-wallet-react'
 import OpsLayout from '../../components/ops/OpsLayout'
 import EventDetailDrawer from '../../components/ops/EventDetailDrawer'
 import CreateCampaignModal, { type CreateCampaignOptions } from '../../components/ops/CreateCampaignModal'
-import type { CampaignOpsMeta } from '../../domain/campaignOpsMeta'
 import { TRIGGER_LABELS } from '../../domain/campaignOpsMeta'
-import { OpsPanel, DataTable, ConfidenceBar, Button } from '../../components/ui'
+import { OpsPanel, DataTable, Button } from '../../components/ui'
 import type { DataTableColumn } from '../../components/ui'
 import type { DisasterEvent } from '../../domain/platform'
 import { useOpsData } from '../../store/opsStore'
 import { usePlatformStore } from '../../store/platformStore'
 import { useGdacsAutoPoll } from '../../hooks/useGdacsAutoPoll'
+import { getGdacsLastFetch } from '../../lib/gdacsSyncState'
 import algosdk from 'algosdk'
 import {
   createCampaign,
@@ -19,12 +19,10 @@ import {
   readVaultAdmin,
   uniqueApprovers,
 } from '../../services/disasterVault'
-import { getLoraApplicationUrl } from '../../services/humanitarianExplorer'
 import { getNetworkConfig } from '../../services/networkConfig'
 import { ROUTES } from '../../config/routes'
-import { Link } from 'react-router-dom'
 import { humanizeContractError } from '../../lib/contractErrorMap'
-import { severityDisplayLabel, campaignStatusLabel } from '../../lib/severityLabels'
+import { severityDisplayLabel, severityBadgeClass } from '../../lib/severityLabels'
 
 const ADMIN = (): string => (import.meta.env.VITE_ADMIN_ADDRESS || '').trim()
 
@@ -39,12 +37,19 @@ function adminWalletHint(
   return 'ready'
 }
 
+function typePill(type: string) {
+  return (
+    <span className="inline-block rounded border border-border-medium bg-bg-elevated px-2 py-0.5 text-[10px] text-text-secondary">
+      {type}
+    </span>
+  )
+}
+
 export default function Events() {
   const navigate = useNavigate()
   const { events } = useOpsData()
   const linkCampaign = usePlatformStore((s) => s.linkEventOnChainCampaign)
   const registerCampaignMeta = usePlatformStore((s) => s.registerCampaignMeta)
-  const getCampaignMeta = usePlatformStore((s) => s.getCampaignMeta)
   const syncFromChain = usePlatformStore((s) => s.syncEventCampaignFromChain)
   const { activeAddress, signTransactions } = useWallet()
   const { busy: gdacsBusy, lastSyncedLabel, refreshGdacs } = useGdacsAutoPoll()
@@ -53,21 +58,17 @@ export default function Events() {
   const [selected, setSelected] = useState<DisasterEvent | null>(null)
   const [err, setErr] = useState<string | null>(null)
 
-  const highSeverityCount = events.filter(
-    (e) => e.severity === 'Critical' || e.severity === 'High',
-  ).length
-
   const walletState = adminWalletHint(activeAddress ?? undefined, signTransactions)
+  const lastSync = getGdacsLastFetch()
+  const syncFresh = lastSync > 0 && Date.now() - lastSync < 5 * 60_000
 
   useEffect(() => {
     if (walletState === 'ready') setErr(null)
   }, [walletState])
 
   const runCreateCampaign = async (event: DisasterEvent, options: CreateCampaignOptions) => {
-    if (walletState !== 'ready') return
-    if (!activeAddress || !signTransactions) return
+    if (walletState !== 'ready' || !activeAddress || !signTransactions) return
     setErr(null)
-
     const chainAdmin = await readVaultAdmin()
     if (!chainAdmin) {
       setErr('Relief vault admin is not configured on-chain. Run bootstrap before creating campaigns.')
@@ -78,7 +79,6 @@ export default function Events() {
       setErr('Connected operations wallet does not match the vault administrator.')
       return
     }
-
     const approvers = uniqueApprovers()
     if (approvers.length === 0) {
       setErr('Approver wallets are not configured.')
@@ -86,7 +86,6 @@ export default function Events() {
     }
     const threshold = Math.min(2, approvers.length)
     const campaignName = `Relief: ${event.location}`.slice(0, 16)
-
     setCreateBusy(event.id)
     try {
       const { algod } = getNetworkConfig()
@@ -95,7 +94,7 @@ export default function Events() {
       const lastRound = Number(status['last-round'])
       const expiryRounds = Number(import.meta.env.VITE_CAMPAIGN_EXPIRY_ROUNDS || 2_000_000)
       const targetMicroUsdc = Number(import.meta.env.VITE_CAMPAIGN_TARGET_MICRO_USDC || 10_000_000)
-      const { txId, campaignId } = await createCampaign(activeAddress, signTransactions, {
+      const { campaignId } = await createCampaign(activeAddress, signTransactions, {
         name: campaignName,
         targetMicroUsdc,
         region: event.location.slice(0, 8),
@@ -103,8 +102,8 @@ export default function Events() {
         threshold,
         expiryRound: lastRound + expiryRounds,
       })
-      linkCampaign(event.id, campaignId, txId)
-      const meta: CampaignOpsMeta = {
+      linkCampaign(event.id, campaignId, '')
+      registerCampaignMeta({
         eventId: event.id,
         onChainCampaignId: campaignId,
         name: campaignName,
@@ -119,15 +118,9 @@ export default function Events() {
             ? `Monitoring — will auto-disburse if ${TRIGGER_LABELS[options.triggerParameter].toLowerCase()} exceeds ${options.triggerThreshold}`
             : undefined,
         createdAt: new Date().toISOString(),
-      }
-      registerCampaignMeta(meta)
+      })
       await syncFromChain(event.id, campaignId)
       setModalEvent(null)
-      setSelected((s) =>
-        s?.id === event.id
-          ? { ...s, onChainCampaignId: campaignId, opsStatus: 'approval_pending', onChainStatus: 1 }
-          : s,
-      )
       navigate(`${ROUTES.operationsVerification}?campaign=${campaignId}`)
     } catch (e) {
       setErr(humanizeContractError(e))
@@ -137,55 +130,47 @@ export default function Events() {
   }
 
   const columns: DataTableColumn<DisasterEvent>[] = [
-    { key: 'id', header: 'Event ID', render: (e) => <span className="font-mono text-xs">{e.id}</span> },
-    { key: 'loc', header: 'Location', render: (e) => e.location },
-    { key: 'type', header: 'Type', render: (e) => e.type },
+    {
+      key: 'id',
+      header: 'Event ID',
+      render: (e) => <span className="font-[JetBrains_Mono] text-[11px] text-text-tertiary">{e.id}</span>,
+    },
+    {
+      key: 'loc',
+      header: 'Location',
+      render: (e) => <span className="text-[14px] font-medium text-text-primary">{e.location}</span>,
+    },
+    { key: 'type', header: 'Type', render: (e) => typePill(e.type) },
     {
       key: 'sev',
       header: 'Severity',
       render: (e) => (
-        <span className="text-xs text-text-primary">{severityDisplayLabel(e.severity)}</span>
+        <span className={severityBadgeClass(e.severity)}>{severityDisplayLabel(e.severity)}</span>
       ),
     },
-    { key: 'conf', header: 'Confidence', render: (e) => <ConfidenceBar value={e.confidence} /> },
     {
-      key: 'status',
-      header: 'Workflow',
-      render: (e) => {
-        const meta = e.onChainCampaignId ? getCampaignMeta(e.onChainCampaignId) : undefined
-        return (
-          <span className="text-xs text-text-secondary">
-            {meta?.kind === 'anticipatory' ? '⚡ ' : ''}
-            {e.onChainCampaignId
-              ? e.onChainStatus != null
-                ? campaignStatusLabel(e.onChainStatus)
-                : 'Campaign linked'
-              : 'No campaign'}
-          </span>
-        )
-      },
+      key: 'time',
+      header: 'Updated',
+      render: (e) => (
+        <span className="font-[JetBrains_Mono] text-[11px] text-text-tertiary">
+          {e.detectedAt ? new Date(e.detectedAt).toLocaleString() : '—'}
+        </span>
+      ),
     },
     {
-      key: 'chain',
-      header: 'On-chain',
+      key: 'action',
+      header: '',
       render: (e) =>
         e.onChainCampaignId ? (
-          <span className="font-mono text-xs text-accent-primary">#{e.onChainCampaignId}</span>
+          <span className="font-[JetBrains_Mono] text-[11px] text-accent-primary">#{e.onChainCampaignId}</span>
         ) : isDisasterVaultConfigured() ? (
           <Button
             variant="outline"
             className="min-h-0 py-1 text-[10px]"
             disabled={createBusy === e.id || walletState !== 'ready'}
-            title={
-              walletState === 'wrong'
-                ? 'Switch to operations wallet to create a campaign'
-                : walletState === 'connect'
-                  ? 'Connect the operations wallet to create a campaign'
-                  : undefined
-            }
             onClick={(ev) => {
               ev.stopPropagation()
-              void (walletState === 'ready' ? setModalEvent(e) : undefined)
+              if (walletState === 'ready') setModalEvent(e)
             }}
           >
             {createBusy === e.id ? '…' : 'Create'}
@@ -196,60 +181,59 @@ export default function Events() {
     },
   ]
 
-  const disasterLora = Number(import.meta.env.VITE_DISASTER_APP_ID)
-    ? getLoraApplicationUrl(Number(import.meta.env.VITE_DISASTER_APP_ID))
-    : null
+  const toolbar = (
+    <>
+      <span className="inline-flex items-center gap-2 font-[JetBrains_Mono] text-[11px] text-text-tertiary">
+        <span
+          className={`h-2 w-2 rounded-full ${syncFresh ? 'bg-alert-success status-dot-pulse' : 'bg-alert-warning'}`}
+          aria-hidden
+        />
+        Last synced: {lastSyncedLabel}
+      </span>
+      <Button
+        variant="primary"
+        disabled={gdacsBusy}
+        onClick={() => void refreshGdacs()}
+        className="!rounded-none !border-0 !bg-[#FF6B00] !text-black hover:!brightness-110 text-xs font-semibold px-4"
+      >
+        {gdacsBusy ? 'Refreshing…' : 'Refresh'}
+      </Button>
+      <span className="rounded-full border border-[rgba(255,107,0,0.3)] bg-[rgba(255,107,0,0.15)] px-2.5 py-1 font-[JetBrains_Mono] text-[11px] text-[#FF6B00]">
+        {events.length} signals
+      </span>
+    </>
+  )
 
   return (
     <OpsLayout
       title="Active Events"
-      description="Review disaster signals, open incident details, and link each event to a relief campaign."
+      headerActions={toolbar}
     >
-      <div className="mb-4 flex flex-wrap gap-3 items-center min-w-0">
-        <Button variant="primary" disabled={gdacsBusy} onClick={() => void refreshGdacs()}>
-          {gdacsBusy ? 'Refreshing…' : 'Refresh events'}
-        </Button>
-        <span className="text-xs font-mono text-text-tertiary shrink-0">Last synced: {lastSyncedLabel}</span>
-        {highSeverityCount > 0 ? (
-          <span className="text-xs text-alert-warning font-mono shrink-0">
-            {highSeverityCount} high/critical alert{highSeverityCount === 1 ? '' : 's'}
-          </span>
-        ) : null}
-        {disasterLora ? (
-          <a
-            href={disasterLora}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-accent-primary shrink-0 whitespace-nowrap"
-          >
-            Verify on blockchain
-          </a>
-        ) : null}
-        <Link
-          to={ROUTES.operationsVerification}
-          className="text-sm text-text-secondary hover:text-accent-primary shrink-0 whitespace-nowrap"
-        >
-          Approvals →
-        </Link>
-      </div>
       {walletState === 'wrong' ? (
-        <p className="text-xs text-text-primary mb-4 border border-alert-warning/40 bg-alert-warning/10 text-alert-warning px-3 py-2 rounded">
-          You are connected as a viewer. Connect the operations wallet to create campaigns.
-        </p>
+        <div
+          className="mb-4 border border-[#F59E0B]/30 border-l-[3px] border-l-[#F59E0B] bg-[rgba(245,158,11,0.08)] px-4 py-3 text-[13px] text-[#F59E0B]"
+          role="status"
+        >
+          Connect the operations wallet to create campaigns.
+        </div>
       ) : walletState === 'connect' ? (
-        <p className="text-xs text-text-secondary mb-4 border border-border-subtle bg-bg-elevated/50 px-3 py-2 rounded">
+        <p className="mb-4 text-[13px] text-text-secondary surface-inset px-4 py-3">
           Connect the operations wallet in Pera to create relief campaigns.
         </p>
       ) : null}
       {err ? <p className="text-xs text-alert-critical mb-4">{err}</p> : null}
-      <OpsPanel title="Incidents" noPadding>
+
+      <OpsPanel title="Incident registry" noPadding>
         <DataTable
           columns={columns}
           data={events}
           rowKey={(e) => e.id}
+          selectedRowKey={selected?.id ?? null}
           onRowClick={(e) => setSelected(e)}
+          emptyMessage="No active signals — refresh the live disaster feed."
         />
       </OpsPanel>
+
       {modalEvent ? (
         <CreateCampaignModal
           event={modalEvent}

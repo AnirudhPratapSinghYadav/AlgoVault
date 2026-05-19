@@ -86,6 +86,24 @@ function disasterIntelPlugin(): Plugin {
         }
       })
 
+      server.middlewares.use('/api/alert-status', async (_req, res) => {
+        res.setHeader('Content-Type', 'application/json')
+        const botPort = process.env.BOT_PORT || '3002'
+        try {
+          const r = await fetch(`http://127.0.0.1:${botPort}/bot/health`, { signal: AbortSignal.timeout(2500) })
+          const h = (await r.json()) as { telegram?: boolean; polling?: boolean }
+          res.end(
+            JSON.stringify({
+              running: true,
+              alertService: Boolean(h.telegram),
+              telegram: Boolean(h.polling),
+            }),
+          )
+        } catch {
+          res.end(JSON.stringify({ running: false, alertService: false, telegram: false }))
+        }
+      })
+
       server.middlewares.use('/api/disaster-intel', async (_req, res) => {
         try {
           if (disasterCache && Date.now() - disasterCache.at < CACHE_MS) {

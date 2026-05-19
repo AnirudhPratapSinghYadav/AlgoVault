@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { differenceInDays } from 'date-fns'
 import { ChevronDown, ExternalLink, Radio, ShieldCheck, Zap, Wallet } from 'lucide-react'
-import { useWallet } from '@txnlab/use-wallet-react'
-import { useOpsSession } from '../context/OpsSessionContext'
 import { ROUTES } from '../config/routes'
-import { DEMO_CORE_FOCUS } from '../config/demoFocus'
 import ActDivider from '../components/landing/ActDivider'
 import { ScrollProgressBar, StoryRail } from '../components/landing/StoryProgress'
 import '../styles/landing.css'
@@ -220,7 +217,7 @@ const INSTITUTIONAL_LINKS = [
 const PROTOCOL_STEPS = [
   { icon: Radio, title: 'Detect', body: 'Guardian AI ingests satellite imagery, IMD alerts, and GDACS events.', step: '01' },
   { icon: ShieldCheck, title: 'Approve', body: 'Field officers attest with geotagged proof. Human authority signs before release.', step: '02' },
-  { icon: Zap, title: 'Trigger', body: 'Multi-sig vault conditions met. Disbursement executes on Algorand testnet.', step: '03' },
+  { icon: Zap, title: 'Trigger', body: 'Multi-sig vault conditions met. Disbursement executes.', step: '03' },
   { icon: Wallet, title: 'Receive', body: 'Verified beneficiaries receive funds via Pera, SMS, or MoneyGram—with full audit trail.', step: '04' },
 ]
 
@@ -237,19 +234,19 @@ function StoryScrim({ alignRight, heavy }: { alignRight: boolean; heavy?: boolea
     <>
       <div
         className={`absolute inset-0 z-[1] pointer-events-none ${
-          heavy ? 'bg-[#151c18]/68' : 'bg-[#151c18]/58'
+          heavy ? 'bg-[#1c2320]/68' : 'bg-[#1c2320]/58'
         }`}
         aria-hidden
       />
       <div
         className={`absolute inset-0 z-[1] pointer-events-none ${
           alignRight
-            ? 'bg-gradient-to-l from-[#151c18]/92 via-[#151c18]/72 to-transparent'
-            : 'bg-gradient-to-r from-[#151c18]/92 via-[#151c18]/72 to-transparent'
+            ? 'bg-gradient-to-l from-[#1c2320]/92 via-[#1c2320]/72 to-transparent'
+            : 'bg-gradient-to-r from-[#1c2320]/92 via-[#1c2320]/72 to-transparent'
         }`}
         aria-hidden
       />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#151c18]/90 via-transparent to-[#151c18]/55 pointer-events-none" aria-hidden />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#1c2320]/90 via-transparent to-[#1c2320]/55 pointer-events-none" aria-hidden />
     </>
   )
 }
@@ -320,57 +317,25 @@ function StoryPanel({ chapter, index }: { chapter: StoryChapter; index: number }
 
 export default function Landing() {
   const [copDays, setCopDays] = useState(0)
-  const navigate = useNavigate()
-  const { wallets } = useWallet()
-  const { connect, enterDemoMode } = useOpsSession()
-
-  const peraReady = wallets?.some((w) => String(w.id).toLowerCase() === 'pera')
-  const deflyReady = wallets?.some((w) => String(w.id).toLowerCase() === 'defly')
-
   useEffect(() => {
     setCopDays(differenceInDays(new Date(), new Date('2022-11-20')))
   }, [])
 
-  const handlePera = async () => {
-    try {
-      await connect('pera')
-      navigate('/operations')
-    } catch {
-      /* cancelled */
-    }
-  }
-
-  const handleDefly = async () => {
-    try {
-      await connect('defly')
-      navigate('/operations')
-    } catch {
-      /* cancelled */
-    }
-  }
-
-  const handleDemo = () => {
-    enterDemoMode()
-    navigate('/operations')
-  }
-
   return (
-    <div className="landing-root bg-[#151c18] text-[#f3f1eb] min-h-screen overflow-x-hidden">
+    <div className="landing-root bg-[#0a0a0a] text-[#f0f0f0] min-h-screen overflow-x-hidden">
       <ScrollProgressBar />
       <StoryRail />
 
-      <header className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-between px-5 sm:px-8 py-4 bg-gradient-to-b from-[#151c18]/95 via-[#151c18]/70 to-transparent">
+      <header className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-between px-5 sm:px-8 py-4 bg-gradient-to-b from-[#1c2320]/95 via-[#1c2320]/70 to-transparent">
         <p className="font-serif text-lg sm:text-xl tracking-tight pointer-events-none">
           <span className="text-[#f3f1eb]">ALGO</span>
           <span className="text-[#8fb39a]">VAULT</span>
         </p>
         <nav className="flex items-center gap-4 sm:gap-6 font-mono text-[10px] uppercase tracking-[0.15em]">
           <span className="text-[#a7aca2] hidden sm:inline">Story</span>
-          {!DEMO_CORE_FOCUS ? (
-            <Link to={ROUTES.communityFeed} className="text-[#c8cdc4] hover:text-[#8fb39a] transition-colors">
-              Community
-            </Link>
-          ) : null}
+          <Link to={ROUTES.communityFeed} className="text-[#c8cdc4] hover:text-[#8fb39a] transition-colors">
+            Community
+          </Link>
           <Link to={ROUTES.access} className="text-[#c8cdc4] hover:text-[#8fb39a] transition-colors">
             Operations
           </Link>
@@ -380,30 +345,35 @@ export default function Landing() {
       {/* PROLOGUE */}
       <section className="relative z-10 min-h-[100svh] flex flex-col items-center justify-center px-4 sm:px-6 overflow-hidden isolate">
         <BackgroundMedia src={DOC.biharRooftops} alt="Flood-affected village in Bihar" />
-        <div className="absolute inset-0 z-[1] bg-[#151c18]/52 pointer-events-none" aria-hidden />
-        <div className="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_90%_70%_at_50%_45%,transparent_0%,#151c18_72%)] pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 z-[1] bg-[#1c2320]/52 pointer-events-none" aria-hidden />
+        <div className="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_90%_70%_at_50%_45%,transparent_0%,#1c2320_72%)] pointer-events-none" aria-hidden />
 
         <motion.div
-          className="relative z-10 w-full max-w-4xl mx-auto landing-hero-panel rounded-2xl px-6 sm:px-10 py-10 sm:py-14 text-center mt-16"
+          className="relative z-10 w-full max-w-4xl mx-auto landing-hero-panel px-6 sm:px-10 py-10 sm:py-14 text-center mt-16"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="font-mono text-[10px] tracking-[0.3em] text-[#a7aca2] uppercase mb-6">
-            Prologue · Global loss & damage
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <span className="landing-live-dot" aria-hidden />
+            <p className="font-[JetBrains_Mono] text-[10px] tracking-[0.2em] text-[#888] uppercase">
+              LIVE — GDACS monitoring active
+            </p>
+          </div>
+          <p className="landing-stat-value landing-stat-value--zero">$0</p>
+          <p className="font-[Sora] text-lg sm:text-xl text-[#f0f0f0] mt-4 max-w-xl mx-auto leading-snug">
+            The UN Loss &amp; Damage Fund. Two years. Zero disbursed.
           </p>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#f3f1eb] leading-[0.92] tracking-tight">
-            Relief funds almost never arrive when the body is still in{' '}
-            <span className="text-[#e8b4ae]">shock.</span>
-          </h1>
-          <p className="font-sans text-base sm:text-lg text-[#c8cdc4] max-w-2xl mx-auto mt-8 leading-relaxed">
-            The UN&apos;s Loss & Damage Fund has disbursed <strong className="text-[#f3f1eb] font-semibold">$0</strong> in
-            last-mile payouts—from Patna to Pibor, Indus to Awash. Settlement latency dressed as policy.
-          </p>
-          <div className="inline-block mt-8 px-5 py-3 rounded-lg border border-[#7c3b35]/40 bg-[#7c3b35]/20">
-            <p className="font-mono text-sm text-[#f3f1eb]">
+          <Link
+            to={ROUTES.access}
+            className="landing-cta-primary mt-8 inline-flex min-h-[48px] items-center justify-center px-8"
+          >
+            Enter Operations
+          </Link>
+          <div className="inline-block mt-6 px-5 py-3 border border-[#E63946]/30 bg-[#E63946]/10">
+            <p className="font-[JetBrains_Mono] text-xs text-[#f0f0f0]">
               Days since COP27 — fund live on paper:{' '}
-              <span className="text-[#e8b4ae] font-semibold">{copDays}</span>
+              <span className="text-[#E63946] font-semibold">{copDays}</span>
             </p>
           </div>
         </motion.div>
@@ -419,7 +389,7 @@ export default function Landing() {
       </section>
 
       {/* AUTOPSY */}
-      <section className="relative z-30 py-28 sm:py-36 px-5 sm:px-8 overflow-hidden isolate bg-[#151c18]">
+      <section className="relative z-30 py-28 sm:py-36 px-5 sm:px-8 overflow-hidden isolate bg-[#1c2320]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#7c3b35]/8 rounded-full blur-[100px] landing-orb pointer-events-none" aria-hidden />
 
         <motion.div className="relative max-w-7xl mx-auto xl:pr-10" {...fade}>
@@ -436,12 +406,16 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="relative p-7 sm:p-8 rounded-2xl border border-white/12 bg-[#151917] hover:border-[#7c3b35]/40 transition-colors"
+                className="landing-stat-card relative p-7 sm:p-8 transition-colors"
               >
-                <span className="absolute top-4 right-4 font-mono text-[10px] text-[#6b736d]">0{i + 1}</span>
-                <p className="font-serif text-5xl sm:text-6xl text-[#e8b4ae] tracking-tighter leading-none">{item.stat}</p>
+                <span className="absolute top-4 right-4 font-[JetBrains_Mono] text-[10px] text-[#888]">0{i + 1}</span>
+                <p
+                  className={`landing-stat-value ${item.stat === '0' ? 'landing-stat-value--zero' : ''}`}
+                >
+                  {item.stat}
+                </p>
                 <div className="h-px w-full my-5 bg-white/15" />
-                <p className="font-mono text-[10px] text-[#c8cdc4] uppercase tracking-widest mb-2">{item.label}</p>
+                <p className="landing-stat-label mb-2">{item.label}</p>
                 <p className="font-sans text-sm text-[#a7aca2] leading-relaxed">{item.context}</p>
               </motion.div>
             ))}
@@ -493,7 +467,7 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.06, duration: 0.45 }}
-                  className="relative p-7 sm:p-8 rounded-2xl border border-[#506a5a]/35 bg-[#151c18] hover:border-[#506a5a]/60 transition-colors"
+                  className="relative p-7 sm:p-8 rounded-2xl border border-[#506a5a]/35 bg-[#1c2320] hover:border-[#506a5a]/60 transition-colors"
                 >
                   <span className="font-mono text-[10px] text-[#6b736d] absolute top-5 right-5">{step.step}</span>
                   <div className="w-12 h-12 rounded-xl bg-[#506a5a]/20 border border-[#506a5a]/40 flex items-center justify-center mb-5">
@@ -512,9 +486,9 @@ export default function Landing() {
       <section className="relative z-30 min-h-[70svh] flex flex-col lg:flex-row overflow-hidden isolate">
         <div className="relative lg:w-1/2 min-h-[45svh] lg:min-h-[70svh] overflow-hidden">
           <BackgroundMedia src={DOC.pakistanRoadGone} alt="Flood damage, Pakistan" />
-          <div className="absolute inset-0 z-[1] bg-[#151c18]/45 lg:bg-gradient-to-r lg:from-transparent lg:via-[#151c18]/40 lg:to-[#151c18]" />
+          <div className="absolute inset-0 z-[1] bg-[#1c2320]/45 lg:bg-gradient-to-r lg:from-transparent lg:via-[#1c2320]/40 lg:to-[#1c2320]" />
         </div>
-        <div className="lg:w-1/2 flex items-center px-6 sm:px-10 py-16 sm:py-20 bg-[#151c18] border-t lg:border-t-0 lg:border-l border-white/10">
+        <div className="lg:w-1/2 flex items-center px-6 sm:px-10 py-16 sm:py-20 bg-[#1c2320] border-t lg:border-t-0 lg:border-l border-white/10">
           <motion.div {...fade} className="max-w-md">
             <p className="font-mono text-[10px] tracking-[0.3em] text-[#8fb39a] uppercase mb-5">Epilogue</p>
             <p className="font-serif text-2xl sm:text-3xl lg:text-4xl text-[#f3f1eb] leading-[0.95] tracking-tight">
@@ -529,50 +503,20 @@ export default function Landing() {
       </section>
 
       {/* GATEWAY */}
-      <section className="relative z-30 py-28 sm:py-36 px-5 sm:px-8 overflow-hidden isolate bg-[#151c18]">
+      <section className="relative z-30 py-28 sm:py-36 px-5 sm:px-8 overflow-hidden isolate bg-[#1c2320]">
         <motion.div className="relative max-w-3xl mx-auto text-center xl:pr-8" {...fade}>
           <p className="font-mono text-[10px] tracking-[0.3em] text-[#a7aca2] uppercase mb-3">Operations gateway</p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f3f1eb] leading-[0.95] tracking-tight">
             Enter the console.
           </h2>
           <p className="font-sans text-sm text-[#c8cdc4] max-w-md mx-auto mt-5 leading-relaxed">
-            Wallet or demo—the infrastructure that models how verified relief should move.
+            Verified relief from detection to disbursement.
           </p>
 
-          <div className="mt-12 p-6 sm:p-8 rounded-2xl landing-copy-panel">
-            <div className="flex justify-center mb-4">
-              <Link
-                to={ROUTES.access}
-                className="px-8 py-3.5 font-sans font-semibold bg-[#8fb39a] text-[#151c18] rounded-xl hover:brightness-105 transition-all min-h-[48px] inline-flex items-center justify-center"
-              >
-                Enter Operations
-              </Link>
-            </div>
-            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-              <button
-                type="button"
-                onClick={handlePera}
-                disabled={!peraReady}
-                className="px-7 py-3.5 font-sans font-medium bg-[#ffe200] text-black rounded-xl hover:brightness-105 transition-all disabled:opacity-40 min-h-[48px]"
-              >
-                Pera Wallet
-              </button>
-              <button
-                type="button"
-                onClick={handleDefly}
-                disabled={!deflyReady}
-                className="px-7 py-3.5 font-sans font-medium bg-white text-black rounded-xl hover:brightness-95 transition-all disabled:opacity-40 min-h-[48px]"
-              >
-                Defly Wallet
-              </button>
-              <button
-                type="button"
-                onClick={handleDemo}
-                className="px-7 py-3.5 font-sans font-medium text-[#f3f1eb] border border-[#506a5a] rounded-xl hover:bg-[#506a5a]/20 transition-all min-h-[48px]"
-              >
-                Demo Access
-              </button>
-            </div>
+          <div className="mt-12">
+            <Link to={ROUTES.access} className="landing-cta-primary min-h-[48px] inline-flex items-center justify-center px-10">
+              Enter Operations
+            </Link>
           </div>
         </motion.div>
       </section>
@@ -595,7 +539,7 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06, duration: 0.45 }}
-                className="rounded-2xl border border-white/10 bg-[#151c18] p-6 sm:p-7 hover:border-white/20 transition-colors"
+                className="rounded-2xl border border-white/10 bg-[#1c2320] p-6 sm:p-7 hover:border-white/20 transition-colors"
               >
                 <div className="flex items-start gap-4">
                   <span
@@ -619,7 +563,7 @@ export default function Landing() {
       </section>
 
       {/* INSTITUTIONAL ALIGNMENT */}
-      <section className="relative z-30 py-20 sm:py-28 px-5 sm:px-8 isolate bg-[#151c18] border-t border-white/10">
+      <section className="relative z-30 py-20 sm:py-28 px-5 sm:px-8 isolate bg-[#1c2320] border-t border-white/10">
         <motion.div className="relative max-w-7xl mx-auto xl:pr-10" {...fade}>
           <p className="font-mono text-[10px] tracking-[0.3em] text-[#a7aca2] uppercase mb-3">
             Institutional context
@@ -653,7 +597,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      <footer className="relative z-30 py-12 border-t border-white/10 bg-[#151c18] px-4">
+      <footer className="relative z-30 py-12 border-t border-white/10 bg-[#1c2320] px-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a7aca2] text-center">
           Institutional disaster disbursement · Algorand testnet
         </p>

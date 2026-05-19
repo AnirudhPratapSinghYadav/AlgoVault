@@ -1,4 +1,5 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
+import { getLoraApplicationUrl } from '../services/humanitarianExplorer'
 import { MapPin, Shield, Clock } from 'lucide-react'
 import PublicHeader from '../components/layout/PublicHeader'
 import {
@@ -20,6 +21,9 @@ const linkBtnOutline =
 
 export default function CommunityCrisisDetail() {
   const { crisisId } = useParams<{ crisisId: string }>()
+  const location = useLocation()
+  const appealOnChain = (location.state as { appealOnChain?: boolean } | null)?.appealOnChain
+  const APPEALS_APP_ID = Number(import.meta.env.VITE_APPEALS_APP_ID || 0)
   const storeCrisis = useCommunityStore((s) => s.crises.find((c) => c.id === crisisId))
   const getDonations = useCommunityStore((s) => s.getDonationsForCrisis)
   const crisis = storeCrisis
@@ -47,6 +51,18 @@ export default function CommunityCrisisDetail() {
       <PublicHeader subtitle={crisis.id} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-16">
+        {appealOnChain && APPEALS_APP_ID ? (
+          <p className="mb-4 text-sm text-alert-success">
+            <a
+              href={getLoraApplicationUrl(APPEALS_APP_ID)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary hover:underline"
+            >
+              Appeal submitted on-chain →
+            </a>
+          </p>
+        ) : null}
         <Link to={ROUTES.communityCrises} className="text-sm text-accent-primary hover:text-accent-hover font-mono">
           ← Community feed
         </Link>

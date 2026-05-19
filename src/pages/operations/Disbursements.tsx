@@ -6,6 +6,7 @@ import OpsLayout from '../../components/ops/OpsLayout'
 import BeneficiaryImport from './BeneficiaryImport'
 import LoraProofCard from '../../components/ops/LoraProofCard'
 import LedgerProofTable from '../../components/ops/LedgerProofTable'
+import ProofSummary from '../../components/ops/ProofSummary'
 import { OpsPanel, TerminalLog, StatusBadge, Button } from '../../components/ui'
 import type { TerminalLogEntry } from '../../components/ui/TerminalLog'
 import { ROUTES } from '../../config/routes'
@@ -18,6 +19,7 @@ import {
   getDisasterExplorerAppUrl,
 } from '../../services/disasterVault'
 import { getLoraApplicationUrl, getLoraTransactionUrl } from '../../services/humanitarianExplorer'
+import { generateCampaignPDF } from '../../lib/campaignReportPdf'
 import { fetchLedgerProofRecords, type LedgerProofRecord } from '../../services/platform/indexerBridge'
 import { explainCampaignState } from '../../lib/loraHumanReadable'
 import { humanizeContractError } from '../../lib/contractErrorMap'
@@ -33,6 +35,8 @@ export default function Disbursements() {
   const initialTab = searchParams.get('tab') === 'proof' ? 'proof' : 'release'
   const [tab, setTab] = useState<Tab>(initialTab)
   const { disbursements, batches, events } = useOpsData()
+  const auditEntries = usePlatformStore((s) => s.auditEntries)
+  const getCampaignMeta = usePlatformStore((s) => s.getCampaignMeta)
   const pending = usePlatformStore((s) => s.pendingBeneficiaryPayouts)
   const confirmFromChain = usePlatformStore((s) => s.confirmDisbursementFromChain)
   const queueDisbursement = usePlatformStore((s) => s.queueDisbursement)
@@ -276,7 +280,7 @@ export default function Disbursements() {
         <>
           <div className="flex flex-wrap gap-3 mb-4">
             <Button variant="outline" disabled={refreshing} onClick={() => void refreshProof()}>
-              {refreshing ? 'Refreshing…' : 'Refresh blockchain proof'}
+              {refreshing ? 'Refreshing…' : 'Refresh'}
             </Button>
             {DISASTER_APP_ID ? (
               <a
@@ -300,15 +304,79 @@ export default function Disbursements() {
             ) : null}
           </div>
 
-          {proofError ? <p className="text-xs text-alert-warning font-mono mb-4">{proofError}</p> : null}
+          {proofError ? <p className="text-xs text-alert-warning mb-4">{proofError}</p> : null}
+
+          <ProofSummary
+            headerAction={
+              selected && campaignId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const meta = getCampaignMeta(campaignId)
+                    const proofLines =
+                      lastPayoutLines.length > 0
+                        ? lastPayoutLines.map((l, i) => ({
+                            name: l.name,
+                            address: l.identifier,
+                            amount: l.amountUsdc,
+                            txId: disbursements[i]?.txnHash ?? disbursements[0]?.txnHash ?? '',
+                          }))
+                        : disbursements
+                            .filter((d) => d.status === 'confirmed')
+                            .map((d) => ({
+                              name: d.destination,
+                              address: d.destination,
+                              amount: d.amount,
+                              txId: d.txnHash,
+                            }))
+                    const approvals = auditEntries
+                      .filter((a) => a.action === 'campaign_approval' && a.entityId === String(campaignId))
+                      .map((a) => ({
+                        address: a.actorId,
+                        timestamp: a.timestamp,
+                        txId: a.txnHash ?? '',
+                      }))
+                    generateCampaignPDF({
+                      name: meta?.name ?? `Campaign #${campaignId}`,
+                      location: selected.location,
+                      type: selected.type,
+                      campaignId,
+                      createdAt: meta?.createdAt,
+                      totalUsdc: proofLines.reduce((s, p) => s + p.amount, 0),
+                      approvals,
+                      disbursements: proofLines,
+                    })
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#0c0f0e] text-white text-sm font-medium hover:brightness-110"
+                >
+                  ↓ Download Report
+                </button>
+              ) : null
+            }
+            totalUsdc={disbursements.filter((d) => d.status === 'confirmed').reduce((s, d) => s + d.amount, 0)}
+            beneficiaryCount={lastPayoutLines.length || disbursements.filter((d) => d.status === 'confirmed').length}
+            lines={
+              lastPayoutLines.length > 0
+                ? lastPayoutLines.map((l, i) => ({
+                    name: l.name,
+                    amountUsdc: l.amountUsdc,
+                    txnHash: disbursements[i]?.txnHash ?? disbursements[0]?.txnHash ?? '',
+                  }))
+                : disbursements
+                    .filter((d) => d.status === 'confirmed')
+                    .slice(0, 8)
+                    .map((d) => ({
+                      name: d.destination,
+                      amountUsdc: d.amount,
+                      txnHash: d.txnHash,
+                    }))
+            }
+          />
 
           <OpsPanel title="Blockchain-confirmed transactions">
-            <p className="text-xs text-text-secondary mb-4">
-              Confirmed testnet transactions from DisasterVault. Expand JSON or verify on blockchain.
-            </p>
             <LedgerProofTable
               records={proofRecords}
-              emptyMessage="No transactions yet — sign an action in Pera, then refresh."
+              emptyMessage="No disbursements yet. Complete the approval workflow to disburse funds and see proof here."
             />
           </OpsPanel>
 

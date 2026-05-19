@@ -6,7 +6,7 @@ const APPEALS = Number(import.meta.env.VITE_APPEALS_APP_ID) || 0
 
 export default function AppsExplainer() {
   return (
-    <OpsPanel title="Why three app IDs?">
+    <OpsPanel title="Why three contract IDs?">
       <p className="text-xs text-text-secondary mb-4 leading-relaxed">
         AlgoVault is one product with three on-chain programs. They cannot be a single app without a new unified
         contract (different assets and rules).

@@ -1,15 +1,14 @@
 import type { LucideIcon } from 'lucide-react'
 import {
-  Home,
+  LayoutGrid,
   AlertTriangle,
   CheckCircle,
   ArrowRightCircle,
   Map,
   Settings,
-  Layers,
+  Users,
 } from 'lucide-react'
 import { ROUTES } from './routes'
-import { DEMO_CORE_FOCUS } from './demoFocus'
 
 export interface OpsNavItem {
   path: string
@@ -18,26 +17,13 @@ export interface OpsNavItem {
   exact?: boolean
 }
 
-const ALL_OPS_NAV_ITEMS: OpsNavItem[] = [
-  { path: ROUTES.operations, label: 'Overview', icon: Home, exact: true },
+/** Appeals always visible — not gated by VITE_DEMO_CORE_FOCUS */
+export const OPS_NAV_ITEMS: OpsNavItem[] = [
+  { path: ROUTES.operations, label: 'Overview', icon: LayoutGrid, exact: true },
   { path: ROUTES.operationsEvents, label: 'Active Events', icon: AlertTriangle },
   { path: ROUTES.operationsVerification, label: 'Approvals', icon: CheckCircle },
-  { path: ROUTES.operationsDisbursements, label: 'Release & proof', icon: ArrowRightCircle },
+  { path: ROUTES.operationsCommunityQueue, label: 'Appeals', icon: Users },
+  { path: ROUTES.operationsDisbursements, label: 'Release & Proof', icon: ArrowRightCircle },
   { path: ROUTES.operationsMap, label: 'Incident Map', icon: Map },
   { path: ROUTES.operationsSettings, label: 'Settings', icon: Settings },
 ]
-
-/** Community appeals queue — hidden during core disaster demo. */
-const COMMUNITY_OPS_NAV: OpsNavItem = {
-  path: ROUTES.operationsCommunityQueue,
-  label: 'Appeals',
-  icon: Layers,
-}
-
-export const OPS_NAV_ITEMS: OpsNavItem[] = DEMO_CORE_FOCUS
-  ? ALL_OPS_NAV_ITEMS
-  : [
-      ...ALL_OPS_NAV_ITEMS.slice(0, 3),
-      COMMUNITY_OPS_NAV,
-      ...ALL_OPS_NAV_ITEMS.slice(3),
-    ]

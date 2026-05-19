@@ -9,10 +9,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-accent-primary text-text-inverse hover:bg-accent-hover border-transparent',
-  outline: 'bg-transparent text-text-secondary border-border-medium hover:border-accent-primary hover:text-text-primary',
-  ghost: 'bg-transparent text-text-tertiary border-transparent hover:text-text-primary hover:bg-bg-elevated',
-  danger: 'bg-alert-critical/20 text-alert-critical border-alert-critical/40 hover:bg-alert-critical/30',
+  primary:
+    'bg-accent-primary text-text-inverse hover:bg-accent-hover border-transparent shadow-[var(--shadow-1)]',
+  outline:
+    'bg-bg-elevated text-text-primary border-border-medium hover:border-accent-primary hover:bg-bg-surface-high',
+  ghost: 'bg-transparent text-text-secondary border-transparent hover:text-text-primary hover:bg-bg-elevated',
+  danger: 'bg-alert-critical/15 text-alert-critical border-alert-critical/35 hover:bg-alert-critical/25',
 }
 
 export default function Button({
@@ -26,7 +28,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border transition-colors min-h-[44px] disabled:opacity-50 disabled:pointer-events-none ${VARIANTS[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium border transition-colors min-h-[40px] disabled:opacity-50 disabled:pointer-events-none ${VARIANTS[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...props}
     >
       {children}

@@ -6,11 +6,8 @@ import ComplianceBanner from '../components/ComplianceBanner'
 import { OpsPanel, Button } from '../components/ui'
 import { ROUTES } from '../config/routes'
 import { useCommunityStore } from '../store/communityStore'
-import {
-  withdrawAppeal,
-  isAppealsHubConfigured,
-  getExplorerTransactionUrl,
-} from '../services/communityDonation'
+import { withdrawAppeal, isAppealsHubConfigured } from '../services/communityDonation'
+import { getLoraTransactionUrl } from '../services/humanitarianExplorer'
 
 export default function AppealWithdraw() {
   const { id } = useParams<{ id: string }>()
@@ -74,9 +71,9 @@ export default function AppealWithdraw() {
         </OpsPanel>
         {txId ? (
           <p className="text-sm text-alert-success font-mono">
-            Confirmed:{' '}
-            <a href={getExplorerTransactionUrl(txId)} target="_blank" rel="noopener noreferrer" className="underline">
-              {txId.slice(0, 20)}…
+            Withdrawal recorded — txn: {txId.slice(0, 8)}…{' '}
+            <a href={getLoraTransactionUrl(txId)} target="_blank" rel="noopener noreferrer" className="text-accent-primary underline">
+              Verify →
             </a>
           </p>
         ) : (

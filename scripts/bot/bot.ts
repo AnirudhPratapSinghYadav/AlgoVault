@@ -9,7 +9,6 @@ import TelegramBot from 'node-telegram-bot-api'
 import { config } from './config.js'
 import { registerTelegramHandlers } from './telegramHandlers.js'
 import { setNotifier } from './services/notificationService.js'
-import { startOpsAlertEngine, runOpsAlertStartupPing } from './services/opsAlertEngine.js'
 import { opsChannelConfigured } from './services/telegramOpsChannel.js'
 import { setTelegramBot } from './services/telegramRichSend.js'
 import type { BotChannel } from './stores/subscriptionStore.js'
@@ -67,16 +66,10 @@ async function main() {
     })
   })
 
-  startOpsAlertEngine()
-
   if (!config.telegramChatId.trim()) {
     console.warn('[bot] TELEGRAM_CHAT_ID not set — ops pushes disabled. Message @userinfobot for your id.')
-  } else if (opsChannelConfigured() && telegramBot) {
-    setTimeout(() => {
-      void runOpsAlertStartupPing().catch((e) =>
-        console.error('[bot] startup ping failed', e instanceof Error ? e.message : e),
-      )
-    }, 2000)
+  } else if (opsChannelConfigured()) {
+    console.log('[bot] Proactive alerts: run `npm run alert:service` or `npm run services` (recommended)')
   }
 
   app.listen(config.port, () => {

@@ -6,7 +6,7 @@ function loraBase(): string {
   return `https://lora.algokit.io/${loraNetworkSegment}`
 }
 
-export function getLoraApplicationUrl(appId: number): string {
+export function getLoraApplicationUrl(appId: number | string): string {
   return `${loraBase()}/application/${appId}`
 }
 

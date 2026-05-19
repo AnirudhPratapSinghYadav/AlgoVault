@@ -10,11 +10,8 @@ import { ROUTES } from '../config/routes'
 import { useCommunityStore } from '../store/communityStore'
 import { usePlatformStore } from '../store/platformStore'
 import { truncateAddress } from '../lib/format'
-import {
-  donateToAppeal,
-  isAppealsHubConfigured,
-  getExplorerTransactionUrl,
-} from '../services/communityDonation'
+import { donateToAppeal, isAppealsHubConfigured } from '../services/communityDonation'
+import { getLoraTransactionUrl } from '../services/humanitarianExplorer'
 
 export default function CrisisDonate() {
   const { id } = useParams<{ id: string }>()
@@ -104,14 +101,17 @@ export default function CrisisDonate() {
         {txnId ? (
           <div>
             <TerminalLog entries={successLog} title="On-chain confirmation" />
-            <a
-              href={getExplorerTransactionUrl(txnId)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-accent-primary mt-4 inline-block"
-            >
-              View on explorer →
-            </a>
+            <p className="mt-4 text-sm text-alert-success font-mono">
+              Donation recorded — txn: {txnId.slice(0, 8)}…{' '}
+              <a
+                href={getLoraTransactionUrl(txnId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-primary hover:underline"
+              >
+                Verify →
+              </a>
+            </p>
             <Link
               to={ROUTES.communityDetail(crisis.id)}
               className="inline-block mt-6 text-sm text-accent-primary hover:text-accent-hover"

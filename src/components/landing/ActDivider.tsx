@@ -10,17 +10,17 @@ type ActDividerProps = {
 
 const variantStyles = {
   crisis: {
-    gradient: 'from-[#1a1210] via-[#151c18] to-[#151c18]',
+    gradient: 'from-[#1a1210] via-[#1c2320] to-[#1c2320]',
     accent: 'text-[#e8b4ae]',
     glow: 'bg-[#7c3b35]/15',
   },
   turn: {
-    gradient: 'from-[#151c18] via-[#1a2620] to-[#151c18]',
+    gradient: 'from-[#1c2320] via-[#1a2620] to-[#1c2320]',
     accent: 'text-[#d4bc8a]',
     glow: 'bg-[#8b6914]/12',
   },
   resolve: {
-    gradient: 'from-[#121a16] via-[#1a2620] to-[#151c18]',
+    gradient: 'from-[#121a16] via-[#1a2620] to-[#1c2320]',
     accent: 'text-[#8fb39a]',
     glow: 'bg-[#506a5a]/15',
   },

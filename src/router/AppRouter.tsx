@@ -70,6 +70,7 @@ export default function AppRouter() {
         <Route path="/appeal/:id/donate" element={<CrisisDonate />} />
         <Route path="/appeal/:id/withdraw" element={<AppealWithdraw />} />
 
+        <Route path="/operations/overview" element={<Navigate to={ROUTES.operations} replace />} />
         <Route path={ROUTES.operations} element={<OpsRoute><CommandCenter /></OpsRoute>} />
         <Route path={ROUTES.operationsEvents} element={<OpsRoute><Events /></OpsRoute>} />
         <Route path={ROUTES.operationsVerification} element={<OpsRoute><Verification /></OpsRoute>} />

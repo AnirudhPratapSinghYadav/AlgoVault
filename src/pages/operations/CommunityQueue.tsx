@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import OpsLayout from '../../components/ops/OpsLayout'
+import { ROUTES } from '../../config/routes'
 import AppealFeedCard from '../../components/ops/AppealFeedCard'
 import { CountBadge, Button } from '../../components/ui'
 import { useCommunityStore } from '../../store/communityStore'
@@ -59,8 +61,7 @@ export default function CommunityQueue() {
   return (
     <OpsLayout
       title="Community appeals"
-      description="Review individual emergencies. Images match appeal type. Every approve and fund action is signed in Pera and verifiable on the blockchain."
-      breadcrumb="Community"
+      description="Pending community appeals awaiting admin approval."
       headerActions={
         <div className="flex items-center gap-2">
           <CountBadge count={feed.length} variant="neutral" />
@@ -109,6 +110,15 @@ export default function CommunityQueue() {
       {feed.length === 0 ? (
         <div className="py-16 text-center border border-dashed border-border-medium bg-bg-surface rounded-lg">
           <p className="text-sm text-text-secondary">No appeals in this view.</p>
+          <p className="mt-2 text-[12px] text-text-tertiary">
+            <Link to={ROUTES.submitCrisis} className="text-accent-primary hover:underline">
+              Submit a community appeal
+            </Link>{' '}
+            · public feed at{' '}
+            <Link to={ROUTES.communityFeed} className="text-accent-primary hover:underline">
+              /community/feed
+            </Link>
+          </p>
           <Button variant="primary" className="mt-6" disabled={refreshing} onClick={() => void loadChain()}>
             Sync from chain
           </Button>

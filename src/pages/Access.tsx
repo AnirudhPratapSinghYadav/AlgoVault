@@ -5,7 +5,7 @@ import { ArrowRight, Key } from 'lucide-react'
 import { useWallet } from '@txnlab/use-wallet-react'
 import { useOpsSession } from '../context/OpsSessionContext'
 import { usePlatformStore } from '../store/platformStore'
-import { DEMO_CORE_FOCUS } from '../config/demoFocus'
+import { ROUTES } from '../config/routes'
 
 export default function Access() {
   const navigate = useNavigate()
@@ -36,17 +36,17 @@ export default function Access() {
     setLoading(provider)
     try {
       await connect(provider)
-      navigate('/operations')
+      navigate(ROUTES.operations)
     } catch {
-      setError('Connection failed. Try again or use demonstration mode.')
+      setError('Connection failed. Try again.')
     } finally {
       setLoading(null)
     }
   }
 
-  const handleDemo = () => {
+  const handleEnter = () => {
     enterDemoMode()
-    navigate('/operations')
+    navigate(ROUTES.operations)
   }
 
   const pera = wallets?.find((w) => String(w.id).toLowerCase() === 'pera')
@@ -61,10 +61,8 @@ export default function Access() {
           className="absolute inset-0 w-full h-full object-cover cinema-img"
         />
         <div className="absolute inset-0 bg-overlay-darker" />
-        <div className="absolute inset-0 bg-accent-deep/10" />
         <div className="absolute bottom-6 left-6 right-6 max-w-sm p-5 bg-bg-surface border-l-[3px] border-l-accent-primary">
           <p className="font-mono text-[10px] uppercase tracking-label text-text-tertiary">Operations snapshot</p>
-          <p className="mt-1 text-[9px] text-text-tertiary">From live feeds when available — not simulated counts</p>
           <ul className="mt-3 space-y-2 text-xs font-mono">
             <li className="flex justify-between">
               <span className="text-text-tertiary">Active signals</span>
@@ -78,12 +76,7 @@ export default function Access() {
               <span className="text-text-tertiary">Last disbursement</span>
               <span className="text-accent-primary">{opsSnapshot.lastDisbLabel}</span>
             </li>
-            <li className="flex justify-between">
-              <span className="text-text-tertiary">Network status</span>
-              <span className="text-alert-success">TESTNET READY</span>
-            </li>
           </ul>
-          <p className="mt-4 font-mono text-[9px] text-text-tertiary">Algorand testnet · humanitarian ops</p>
         </div>
       </div>
 
@@ -95,23 +88,30 @@ export default function Access() {
             Secure access for disaster response authorities, humanitarian partners, and field verification teams.
           </p>
           <hr className="my-8 border-border-subtle" />
-          <p className="font-mono text-[10px] uppercase tracking-label text-text-tertiary">Institutional access</p>
+          <p className="font-mono text-[10px] uppercase tracking-label text-text-tertiary">Sign in</p>
           <div className="mt-4 space-y-3">
             {[
               { id: 'pera' as const, label: 'Continue with Pera', enabled: !!pera },
               { id: 'defly' as const, label: 'Continue with Defly', enabled: !!defly },
               { id: 'wc' as const, label: 'Continue with WalletConnect', enabled: false },
             ].map(({ id, label, enabled }) => (
-              <button
-                key={id}
-                type="button"
-                disabled={!enabled || !!loading}
-                onClick={() => handleWallet(id)}
-                className="w-full flex items-center justify-between px-5 py-4 bg-bg-elevated border border-border-medium hover:border-accent-primary transition-colors disabled:opacity-50 min-h-[44px]"
-              >
-                <span className="text-sm text-text-primary">{label}</span>
-                <ArrowRight size={18} className="text-text-tertiary" />
-              </button>
+              <div key={id}>
+                <button
+                  type="button"
+                  disabled={!enabled || !!loading}
+                  onClick={() => handleWallet(id)}
+                  className="w-full flex items-center justify-between px-5 py-4 bg-bg-elevated border border-border-medium hover:border-accent-primary transition-colors disabled:opacity-50 min-h-[44px]"
+                >
+                  <span className="text-sm text-text-primary">{label}</span>
+                  <ArrowRight size={18} className="text-text-tertiary" />
+                </button>
+                {id === 'pera' ? (
+                  <p className="mt-2 text-[12px] leading-relaxed text-text-tertiary">
+                    Using Pera on mobile? Open this page on your computer, click Continue with Pera, then scan the QR
+                    with your Pera app.
+                  </p>
+                ) : null}
+              </div>
             ))}
             <button
               type="button"
@@ -126,29 +126,19 @@ export default function Access() {
             </button>
           </div>
           {error ? <p className="mt-4 text-sm text-alert-critical">{error}</p> : null}
-          <div className="my-8 flex items-center gap-3">
-            <hr className="flex-1 border-border-subtle" />
-            <span className="font-mono text-[10px] text-text-tertiary whitespace-nowrap">OR ACCESS TEST ENVIRONMENT</span>
-            <hr className="flex-1 border-border-subtle" />
-          </div>
           <button
             type="button"
-            onClick={handleDemo}
-            className="w-full py-4 bg-accent-primary text-text-inverse font-medium hover:bg-accent-hover transition-colors min-h-[44px]"
+            onClick={handleEnter}
+            className="mt-8 w-full py-4 bg-accent-primary text-text-inverse font-medium hover:bg-accent-hover transition-colors min-h-[44px]"
           >
-            Enter demo operations console
+            Enter Operations
           </button>
-          {!DEMO_CORE_FOCUS ? (
-            <Link
-              to="/community"
-              className="mt-4 block w-full py-3 text-center border border-border-medium text-text-secondary hover:border-accent-primary hover:text-text-primary text-sm transition-colors min-h-[44px] flex items-center justify-center"
-            >
-              Browse community crises (no login)
-            </Link>
-          ) : null}
-          <p className="mt-6 text-xs text-text-tertiary text-center">
-            Demo mode: explore the operations console without a wallet. On-chain actions require Pera.
-          </p>
+          <Link
+            to={ROUTES.communityFeed}
+            className="mt-4 flex w-full min-h-[44px] items-center justify-center border border-border-medium py-3 text-center text-sm text-text-secondary transition-colors hover:border-accent-primary hover:text-text-primary"
+          >
+            Community appeals
+          </Link>
         </div>
       </div>
     </div>

@@ -1,26 +1,34 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ExternalLink } from 'lucide-react'
-import { useWallet } from '@txnlab/use-wallet-react'
 import OpsLayout from '../../components/ops/OpsLayout'
 import AppsExplainer from '../../components/ops/AppsExplainer'
 import AlertChannelsPanel from '../../components/ops/AlertChannelsPanel'
 import HumanitarianStandardsPanel from '../../components/ops/HumanitarianStandardsPanel'
 import { OpsPanel, Button } from '../../components/ui'
 import { ROUTES } from '../../config/routes'
-import { getAppealsHubLoraUrls, getDisasterVaultLoraUrls } from '../../services/humanitarianExplorer'
-import { getAdminAddress } from '../../services/communityDonation'
-import { uniqueApprovers } from '../../services/disasterVault'
+import { getAppealsHubLoraUrls, getDisasterVaultLoraUrls, getLoraApplicationUrl } from '../../services/humanitarianExplorer'
 import { truncateAddress } from '../../lib/format'
 import { useOpsStore } from '../../store/opsStore'
+import { useWallet } from '@txnlab/use-wallet-react'
 
-function CopyRow({ label, value }: { label: string; value: string }) {
+const ADMIN_ADDR = (import.meta.env.VITE_ADMIN_ADDRESS || '').trim()
+const APPROVER_1 = (import.meta.env.VITE_DISASTER_APPROVER_1 || '').trim()
+const APPROVER_2 = (import.meta.env.VITE_DISASTER_APPROVER_2 || '').trim()
+const DISASTER_APP_ID = Number(import.meta.env.VITE_DISASTER_APP_ID || 0)
+const APPEALS_APP_ID = Number(import.meta.env.VITE_APPEALS_APP_ID || 0)
+
+function AddressField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false)
+  if (!value) return null
   return (
     <div className="py-3 border-b border-border-subtle last:border-0">
-      <p className="text-xs text-text-tertiary mb-1">{label}</p>
+      <label className="block text-xs text-text-tertiary mb-1">{label}</label>
       <div className="flex flex-wrap items-center gap-2">
-        <code className="font-mono text-xs text-text-primary break-all">{value}</code>
+        <input
+          readOnly
+          value={value}
+          className="flex-1 min-w-[200px] font-mono text-xs text-text-primary bg-bg-elevated border border-border-medium px-3 py-2"
+        />
         <Button
           variant="outline"
           className="text-[10px] min-h-0 py-1 px-2"
@@ -44,17 +52,25 @@ export default function Settings() {
   const networkBlock = useOpsStore((s) => s.networkBlock)
   const disaster = getDisasterVaultLoraUrls()
   const appeals = getAppealsHubLoraUrls()
-  const admin = getAdminAddress()
-  const approvers = uniqueApprovers()
 
   return (
     <OpsLayout title="Settings" description="Wallet, contracts, funding addresses, and field alerts.">
       <div className="space-y-6 max-w-2xl">
+        <OpsPanel title="Multi-wallet on one device">
+          <AddressField label="Operations admin" value={ADMIN_ADDR} />
+          <AddressField label="Approver 1" value={APPROVER_1} />
+          <AddressField label="Approver 2" value={APPROVER_2} />
+          <p className="mt-4 text-[12px] text-text-tertiary leading-relaxed">
+            Import each account in Pera: Add Account → Import with passphrase. Use the mnemonics from{' '}
+            <span className="font-mono text-text-secondary">docs/DEMO_WALLETS.md</span>
+          </p>
+        </OpsPanel>
+
         <OpsPanel title="Wallet & network">
           <dl className="text-sm space-y-4">
             <div>
               <dt className="text-xs text-text-tertiary">Network</dt>
-              <dd className="text-text-primary mt-1">{import.meta.env.VITE_NETWORK || 'testnet'}</dd>
+              <dd className="text-text-primary mt-1">Connected</dd>
             </div>
             <div>
               <dt className="text-xs text-text-tertiary">Block height</dt>
@@ -68,60 +84,33 @@ export default function Settings() {
                 {activeAddress ? truncateAddress(activeAddress, 8, 8) : 'Not connected'}
               </dd>
             </div>
-            <div>
-              <dt className="text-xs text-text-tertiary">Campaign admin</dt>
-              <dd className="font-mono text-xs text-text-primary mt-1">
-                {admin ? truncateAddress(admin, 8, 8) : '—'}
-              </dd>
-            </div>
-            {approvers.length > 0 ? (
-              <div>
-                <dt className="text-xs text-text-tertiary">Approvers</dt>
-                <dd className="mt-1 space-y-1">
-                  {approvers.map((a) => (
-                    <p key={a} className="font-mono text-[10px] text-text-secondary">
-                      {truncateAddress(a, 8, 6)}
-                    </p>
-                  ))}
-                </dd>
-              </div>
-            ) : null}
           </dl>
-          <p className="text-xs text-text-tertiary mt-4 border-t border-border-subtle pt-4">
-            Every on-chain action requires signing in Pera. Verify results on the blockchain explorer.
-          </p>
         </OpsPanel>
 
         <OpsPanel title="Verify on blockchain">
-          <ul className="space-y-4">
-            {disaster ? (
-              <li className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-border-subtle">
-                <div>
-                  <p className="text-sm text-text-primary">DisasterVault</p>
-                  <p className="font-mono text-xs text-text-tertiary">#{disaster.appId}</p>
-                </div>
-                <a href={disaster.appUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="text-xs min-h-0 py-2 gap-1">
-                    Verify on blockchain <ExternalLink className="w-3 h-3" />
-                  </Button>
-                </a>
-              </li>
+          <div className="flex flex-wrap gap-6">
+            {DISASTER_APP_ID ? (
+              <a
+                href={getLoraApplicationUrl(DISASTER_APP_ID)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-accent-primary hover:underline"
+              >
+                DisasterVault contract →
+              </a>
             ) : null}
-            {appeals ? (
-              <li className="flex flex-wrap items-center justify-between gap-3 py-2">
-                <div>
-                  <p className="text-sm text-text-primary">Community appeals</p>
-                  <p className="font-mono text-xs text-text-tertiary">#{appeals.appId}</p>
-                </div>
-                <a href={appeals.appUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="text-xs min-h-0 py-2 gap-1">
-                    Verify on blockchain <ExternalLink className="w-3 h-3" />
-                  </Button>
-                </a>
-              </li>
+            {APPEALS_APP_ID ? (
+              <a
+                href={getLoraApplicationUrl(APPEALS_APP_ID)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-accent-primary hover:underline"
+              >
+                Community appeals contract →
+              </a>
             ) : null}
-          </ul>
-          {!disaster && !appeals ? (
+          </div>
+          {!DISASTER_APP_ID && !APPEALS_APP_ID ? (
             <p className="text-xs text-text-tertiary">Configure VITE_DISASTER_APP_ID and VITE_APPEALS_APP_ID.</p>
           ) : null}
         </OpsPanel>
@@ -130,8 +119,18 @@ export default function Settings() {
           <p className="text-xs text-text-secondary mb-4">
             Operational fees only. Donors use in-app Fund; relief uses Disbursements.
           </p>
-          {appeals ? <CopyRow label="Community appeals hub" value={appeals.appAddress} /> : null}
-          {disaster ? <CopyRow label="DisasterVault" value={disaster.appAddress} /> : null}
+          {appeals ? (
+            <div className="py-2">
+              <p className="text-xs text-text-tertiary">Community appeals hub</p>
+              <p className="font-mono text-xs text-text-primary break-all">{appeals.appAddress}</p>
+            </div>
+          ) : null}
+          {disaster ? (
+            <div className="py-2">
+              <p className="text-xs text-text-tertiary">DisasterVault</p>
+              <p className="font-mono text-xs text-text-primary break-all">{disaster.appAddress}</p>
+            </div>
+          ) : null}
         </OpsPanel>
 
         <OpsPanel title="Field alerts">

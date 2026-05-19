@@ -12,7 +12,6 @@ import { useCommunityStore } from '../store/communityStore'
 import { usePlatformStore } from '../store/platformStore'
 import { submitCrisisSchema, type SubmitCrisisForm } from '../schemas/submitCrisis'
 import { createAppealOnChain, isAppealsHubConfigured } from '../services/communityDonation'
-
 const inputClass =
   'w-full px-4 py-3 bg-bg-elevated border border-border-medium text-text-primary placeholder:text-text-tertiary focus:border-accent-primary focus:outline-none min-h-[44px]'
 const labelClass = 'block text-sm font-medium text-text-primary mb-2'
@@ -46,6 +45,7 @@ export default function SubmitCrisis() {
       beneficiaryWallet: data.beneficiaryWallet,
     })
 
+    let onChainOk = false
     if (isAppealsHubConfigured() && activeAddress && signTransactions) {
       try {
         const metadataUri = `https://algovault.local/appeal/${id}`
@@ -56,12 +56,13 @@ export default function SubmitCrisis() {
           metadataUri,
         })
         setCrisisOnChain(id, { onChainAppealId: appealId, chainStatus: 'pending', txnHash: txId })
+        onChainOk = true
       } catch (e) {
         setChainErr(e instanceof Error ? e.message : 'On-chain create_appeal failed — saved locally only')
       }
     }
 
-    navigate(ROUTES.communityDetail(id))
+    navigate(ROUTES.communityDetail(id), { state: onChainOk ? { appealOnChain: true } : undefined })
   }
 
   return (

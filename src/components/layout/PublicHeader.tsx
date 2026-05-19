@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { DEMO_CORE_FOCUS } from '../../config/demoFocus'
 
 interface PublicHeaderProps {
   subtitle?: string
@@ -17,11 +16,9 @@ export default function PublicHeader({ subtitle, action }: PublicHeaderProps) {
           {subtitle ? <p className="text-sm text-text-secondary mt-1">{subtitle}</p> : null}
         </div>
         <nav className="flex items-center gap-3 sm:gap-4 text-sm">
-          {!DEMO_CORE_FOCUS ? (
-            <Link to="/community" className="text-text-secondary hover:text-text-primary hidden sm:inline">
-              Community
-            </Link>
-          ) : null}
+          <Link to="/community" className="text-text-secondary hover:text-text-primary hidden sm:inline">
+            Community
+          </Link>
           <Link to="/access" className="text-text-secondary hover:text-text-primary hidden sm:inline">
             Access
           </Link>

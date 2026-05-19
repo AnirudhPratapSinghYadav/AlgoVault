@@ -206,7 +206,7 @@ export default function AppealFeedCard({ crisis, onApproved }: AppealFeedCardPro
 
             {canApprove ? (
               <Button variant="outline" disabled={busy !== null} onClick={() => void handleApprove()}>
-                {busy === 'approve' ? 'Waiting for Pera…' : 'Approve in Pera'}
+                {busy === 'approve' ? 'Signing…' : 'Approve'}
               </Button>
             ) : null}
 

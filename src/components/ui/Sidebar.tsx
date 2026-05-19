@@ -4,7 +4,6 @@ import { OPS_NAV_ITEMS } from '../../config/opsNav'
 import { ROUTES } from '../../config/routes'
 import { useOpsSession } from '../../context/OpsSessionContext'
 import { useOpsStore } from '../../store/opsStore'
-import StatusBadge from './StatusBadge'
 
 interface SidebarProps {
   mobileOpen?: boolean
@@ -14,8 +13,7 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const { address, disconnect } = useOpsSession()
-  const networkLabel = useOpsStore((s) => s.networkLabel)
+  const { disconnect } = useOpsSession()
   const networkBlock = useOpsStore((s) => s.networkBlock)
 
   const isActive = (path: string, exact?: boolean) =>
@@ -23,28 +21,20 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
 
   const body = (
     <>
-      <div className="p-5 border-b border-border-subtle">
+      <div className="px-4 py-5 border-b border-border-subtle">
         <Link
           to={ROUTES.home}
-          className="font-serif text-lg text-text-primary hover:text-accent-primary transition-colors"
           onClick={onClose}
+          className="font-[Sora] text-sm font-bold tracking-tight text-accent-primary hover:brightness-110"
         >
           ALGOVAULT
         </Link>
-        <div className="mt-5 flex items-center gap-3">
-          <div
-            className="w-9 h-9 shrink-0 bg-accent-primary flex items-center justify-center text-text-inverse text-xs font-mono font-medium"
-            aria-hidden
-          >
-            RO
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-text-primary">Operations Console</p>
-            <p className="text-[11px] font-mono text-text-tertiary truncate mt-0.5">
-              {address ? `${address.slice(0, 6)}…` : 'Not connected'}
-            </p>
-          </div>
-        </div>
+        <p
+          className="mt-2 font-[JetBrains_Mono] text-[9px] uppercase tracking-[0.12em] leading-relaxed"
+          style={{ color: 'rgba(255, 107, 0, 0.4)' }}
+        >
+          Humanitarian operations
+        </p>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2" aria-label="Operations navigation">
@@ -55,31 +45,36 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
               key={path}
               to={path}
               onClick={onClose}
-              className={`flex items-center gap-3 px-5 py-3 text-sm transition-colors border-l-[3px] ${
+              className={`flex h-10 items-center gap-3 px-4 text-[13px] transition-colors border-l-[3px] ${
                 active
-                  ? 'bg-bg-elevated border-accent-primary text-text-primary'
-                  : 'border-transparent text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
+                  ? 'border-accent-primary bg-[rgba(255,107,0,0.10)] text-text-primary'
+                  : 'border-transparent text-text-tertiary hover:bg-white/[0.03] hover:text-text-secondary'
               }`}
             >
-              <Icon size={18} strokeWidth={1.5} className="shrink-0" />
+              <Icon size={17} strokeWidth={1.5} className={`shrink-0 ${active ? 'text-accent-primary' : ''}`} />
               <span>{label}</span>
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-5 border-t border-border-subtle bg-bg-surface">
-        <StatusBadge variant="operational" dot className="mb-2">
-          {networkLabel}
-        </StatusBadge>
-        <p className="font-mono text-[10px] text-text-tertiary">Block {networkBlock.toLocaleString()}</p>
+      <div className="border-t border-border-subtle px-4 py-4 bg-bg-surface-secondary">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-alert-success status-dot-pulse" aria-hidden />
+          <span className="font-[JetBrains_Mono] text-[9px] uppercase tracking-wider text-text-secondary">
+            Algorand testnet
+          </span>
+        </div>
+        <p className="mt-1.5 font-[JetBrains_Mono] text-[9px] text-text-tertiary">
+          Block {networkBlock > 0 ? networkBlock.toLocaleString() : '—'}
+        </p>
         <button
           type="button"
           onClick={() => {
             disconnect()
             navigate(ROUTES.access)
           }}
-          className="mt-4 text-xs text-text-tertiary hover:text-text-primary transition-colors"
+          className="mt-4 text-[11px] text-text-tertiary hover:text-alert-critical transition-colors"
         >
           Sign out
         </button>
@@ -89,7 +84,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-sidebar flex-col border-r border-border-subtle bg-bg-surface-secondary shadow-[4px_0_28px_rgba(21,28,24,0.35)]">
+      <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-[220px] flex-col border-r border-border-subtle bg-[#0a0c0b]">
         {body}
       </aside>
       {mobileOpen ? (
@@ -100,11 +95,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
             aria-label="Close navigation"
             onClick={onClose}
           />
-          <aside className="relative flex flex-col w-sidebar max-w-[85vw] h-full bg-bg-surface border-r border-border-subtle">
+          <aside className="relative flex h-full w-[220px] max-w-[85vw] flex-col border-r border-border-subtle bg-[#0a0c0b]">
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-4 right-4 p-1 text-text-tertiary hover:text-text-primary z-10"
+              className="absolute top-4 right-4 z-10 p-1 text-text-tertiary hover:text-text-primary"
               aria-label="Close menu"
             >
               <X size={20} strokeWidth={1.5} />

@@ -44,8 +44,9 @@ export default {
       },
       fontFamily: {
         serif: ['"Instrument Serif"', 'Georgia', 'serif'],
-        sans: ['"Inter Tight"', 'system-ui', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        sora: ['"Sora"', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         label: '0.08em',

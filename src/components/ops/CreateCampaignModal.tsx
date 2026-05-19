@@ -27,20 +27,22 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-      <button type="button" className="absolute inset-0 bg-black/60" onClick={onClose} aria-label="Close" />
-      <div className="relative w-full max-w-md bg-bg-surface border border-border-medium shadow-xl rounded-lg p-6">
-        <h2 className="font-serif text-xl text-text-primary">Create relief campaign</h2>
-        <p className="text-sm text-text-secondary mt-1">{event.location} · {event.type}</p>
+    <div className="modal-root" role="dialog" aria-modal="true">
+      <button type="button" className="overlay-scrim" onClick={onClose} aria-label="Close" />
+      <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg font-semibold text-text-primary">Create relief campaign</h2>
+        <p className="text-sm text-text-secondary mt-1">
+          {event.location} · {event.type}
+        </p>
 
         {DEMO_CORE_FOCUS ? (
           <p className="mt-6 text-sm text-text-secondary">
-            Standard multi-approver relief campaign — funds release after two independent signatures on testnet.
+            Standard multi-approver relief campaign — funds release after two independent signatures.
           </p>
         ) : (
           <fieldset className="mt-6 space-y-3">
-            <legend className="text-xs font-mono uppercase tracking-wider text-text-tertiary">Campaign type</legend>
-            <label className="flex items-start gap-3 cursor-pointer">
+            <legend className="ops-section-label">Campaign type</legend>
+            <label className="flex items-start gap-3 cursor-pointer rounded-[var(--radius-sm)] p-2 hover:bg-bg-elevated">
               <input
                 type="radio"
                 name="kind"
@@ -53,7 +55,7 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
                 <span className="block text-xs text-text-tertiary">Disaster is occurring — standard approval flow</span>
               </span>
             </label>
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-3 cursor-pointer rounded-[var(--radius-sm)] p-2 hover:bg-bg-elevated">
               <input
                 type="radio"
                 name="kind"
@@ -72,13 +74,13 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
         )}
 
         {!DEMO_CORE_FOCUS && kind === 'anticipatory' ? (
-          <div className="mt-4 space-y-3 p-3 border border-border-subtle rounded bg-bg-elevated/50">
-            <label className="block text-xs text-text-tertiary">
+          <div className="mt-4 space-y-3 surface-inset p-4">
+            <label className="block ops-section-label">
               Trigger parameter
               <select
                 value={triggerParameter}
                 onChange={(e) => setTriggerParameter(e.target.value as TriggerParameter)}
-                className="mt-1 w-full bg-bg-primary border border-border-medium px-2 py-2 text-sm text-text-primary"
+                className="ops-select"
               >
                 {(Object.keys(TRIGGER_LABELS) as TriggerParameter[]).map((k) => (
                   <option key={k} value={k}>
@@ -87,7 +89,7 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
                 ))}
               </select>
             </label>
-            <label className="block text-xs text-text-tertiary">
+            <label className="block ops-section-label">
               Threshold (e.g. 2 for meters / m/s / mm)
               <input
                 type="number"
@@ -95,12 +97,9 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
                 step={0.1}
                 value={triggerThreshold}
                 onChange={(e) => setTriggerThreshold(e.target.value)}
-                className="mt-1 w-full bg-bg-primary border border-border-medium px-2 py-2 text-sm font-mono text-text-primary"
+                className="ops-input font-mono"
               />
             </label>
-            <p className="text-[10px] text-text-tertiary">
-              Status after create: Monitoring — will auto-disburse when live feed exceeds threshold.
-            </p>
           </div>
         ) : null}
 
@@ -121,7 +120,7 @@ export default function CreateCampaignModal({ event, open, busy, onClose, onConf
               })
             }
           >
-            {busy ? 'Creating…' : 'Create on-chain'}
+            {busy ? 'Creating…' : 'Create'}
           </Button>
         </div>
       </div>

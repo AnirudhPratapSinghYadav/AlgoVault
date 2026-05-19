@@ -7,7 +7,7 @@
     "wallets:generate": "tsx scripts/generate_demo_wallets.ts",
     "start:server": "tsx server/event-brief-server.ts",
     "alert:service": "tsx scripts/bot/alertService.ts",
-    "services": "npm run bot",
+    "services": "npx concurrently -k -n alerts,guardian -c yellow,magenta \"npm run alert:service\" \"npm run bot\"",
     "dev": "vite",
     "dev:all": "npx concurrently -n web,api -c blue,green \"npm run dev\" \"npm run start:server\"",
     "dev:stack": "npx concurrently -k -n web,api,bot -c blue,green,magenta \"npm run dev -- --open\" \"npm run start:server\" \"npm run bot\"",

@@ -1,38 +1,57 @@
 /**
- * AlgoVault design tokens — sage-charcoal (lifted + green-tinted)
+ * AlgoVault — UN field ops console (ReliefWeb × Linear)
  */
 :root {
-  --bg-primary: #151c18;
-  --bg-surface: #1d2822;
-  --bg-surface-secondary: #243329;
-  --bg-elevated: #2c3d34;
+  --bg-primary: #0c0f0e;
+  --bg-surface: #111413;
+  --bg-elevated: #171b19;
+  --bg-overlay: #1c201e;
+  --bg-surface-secondary: #0a0c0b;
+  --bg-surface-high: #181d1a;
 
-  --text-primary: #f2f4ef;
-  --text-secondary: #c8d8cc;
-  --text-tertiary: #8fa896;
-  --text-inverse: #151c18;
-
-  --accent-primary: #92b89d;
-  --accent-hover: #a8ccb0;
+  --accent-primary: #ff6b00;
+  --accent-primary-dim: rgba(255, 107, 0, 0.1);
+  --accent-secondary: #e63946;
+  --accent-success: #2dc653;
+  --accent-warning: #f59e0b;
+  --accent-hover: #ff8533;
   --accent-primary-hover: var(--accent-hover);
-  --accent-primary-deep: #4d6b58;
+  --accent-primary-deep: #cc5500;
+  --accent-muted: var(--accent-primary-dim);
 
-  --alert-critical: #d97a6f;
-  --alert-warning: #d4b04a;
-  --alert-success: #6aab7a;
-  --alert-info: #6ba8c4;
+  --text-primary: #f0ede8;
+  --text-secondary: #a8a49f;
+  --text-tertiary: #6b6762;
+  --text-accent: #ff6b00;
+  --text-inverse: #0c0f0e;
 
-  --border-subtle: rgba(180, 210, 190, 0.1);
-  --border-medium: rgba(180, 210, 190, 0.16);
-  --border-strong: rgba(120, 165, 135, 0.38);
+  --alert-critical: #e63946;
+  --alert-warning: #f59e0b;
+  --alert-success: #2dc653;
+  --alert-info: #3b82f6;
 
-  --overlay-dark: rgba(21, 28, 24, 0.78);
-  --overlay-darker: rgba(21, 28, 24, 0.9);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(255, 107, 0, 0.25);
+  --border-strong: var(--border-accent);
 
-  --community-upvote: #a8ccb0;
-  --community-downvote: #d97a6f;
-  --community-verified: #6aab7a;
-  --community-pending: #d4b04a;
+  --overlay-dark: rgba(12, 15, 14, 0.75);
+  --overlay-darker: rgba(8, 10, 9, 0.88);
+  --scrim: rgba(8, 10, 9, 0.78);
 
-  --sidebar-width: 240px;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.32);
+  --shadow-drawer: -16px 0 48px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 20px 56px rgba(0, 0, 0, 0.48);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --community-upvote: #2dc653;
+  --community-downvote: #e63946;
+  --community-verified: #2dc653;
+  --community-pending: #f59e0b;
+
+  --sidebar-width: 220px;
 }

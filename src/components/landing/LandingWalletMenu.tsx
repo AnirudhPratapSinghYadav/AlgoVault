@@ -53,7 +53,7 @@ export default function LandingWalletMenu() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-4 py-3 bg-[#151917]/90 backdrop-blur-md border border-white/10 text-[#f3f1eb] font-sans text-sm font-medium shadow-[0_0_30px_rgba(80,106,90,0.15)] hover:border-[#506a5a]/50 transition-all duration-300 min-h-[44px]"
+        className="flex items-center gap-2 px-4 py-3 bg-[#252e2a]/90 backdrop-blur-md border border-white/10 text-[#f3f1eb] font-sans text-sm font-medium shadow-[0_0_30px_rgba(80,106,90,0.15)] hover:border-[#506a5a]/50 transition-all duration-300 min-h-[44px]"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -88,7 +88,7 @@ export default function LandingWalletMenu() {
             onClick={handleDemo}
             className="w-full flex items-center gap-3 px-4 py-3.5 bg-transparent text-[#f3f1eb] font-sans font-medium text-sm border-t border-[#506a5a]/30 hover:bg-[#506a5a]/20 transition-colors min-h-[44px]"
           >
-            Demo console
+            Enter Operations
           </button>
         </div>
       ) : null}

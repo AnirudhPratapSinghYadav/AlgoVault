@@ -19,15 +19,15 @@ export default function OpsPanel({
 }: OpsPanelProps) {
   return (
     <section
-      className={`bg-bg-surface border border-border-subtle ${
+      className={`rounded-[var(--radius-md)] border border-border-subtle bg-bg-surface shadow-[var(--shadow-1)] overflow-hidden ${
         accent === 'left' ? 'border-l-[3px] border-l-accent-primary' : ''
       } ${className}`}
     >
-      <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-border-subtle">
-        <h2 className="font-sans text-sm font-semibold text-text-primary tracking-tight">{title}</h2>
+      <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-border-subtle bg-bg-surface">
+        <h2 className="text-sm font-semibold text-text-primary tracking-tight">{title}</h2>
         {action}
       </div>
-      <div className={noPadding ? '' : 'p-6'}>{children}</div>
+      <div className={noPadding ? '' : 'p-5'}>{children}</div>
     </section>
   )
 }

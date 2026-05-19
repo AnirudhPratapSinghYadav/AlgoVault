@@ -1,4 +1,4 @@
-/* Landing-only — scoped via .landing-root */
+/* Landing-only — emergency orange / crisis red palette */
 
 @keyframes landing-media-zoom {
   from {
@@ -6,6 +6,18 @@
   }
   to {
     transform: scale(1.06);
+  }
+}
+
+@keyframes landing-pulse-dot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.65;
   }
 }
 
@@ -19,16 +31,17 @@
   }
 }
 
-@keyframes landing-shimmer-line {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
+.landing-root {
+  --landing-bg: #0a0a0a;
+  --landing-text: #f0f0f0;
+  --landing-muted: #888888;
+  --landing-card: #111111;
+  --landing-orange: #ff6b00;
+  --landing-red: #e63946;
+  --landing-green: #2dc653;
+  font-family: 'Sora', system-ui, sans-serif;
 }
 
-/* Media stays clipped — never bleeds into next section */
 .landing-root .landing-media {
   position: absolute;
   inset: 0;
@@ -51,37 +64,79 @@
   pointer-events: none;
 }
 
-.landing-root .landing-shimmer {
-  overflow: hidden;
-}
-
-.landing-root .landing-shimmer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(243, 241, 235, 0.03) 50%,
-    transparent 60%
-  );
-  animation: landing-shimmer-line 8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Readable copy on any photo */
 .landing-root .landing-copy-panel {
-  background: rgba(13, 15, 14, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: rgba(17, 17, 17, 0.92);
+  border: 1px solid rgba(255, 107, 0, 0.2);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(16px);
 }
 
 .landing-root .landing-hero-panel {
-  background: rgba(13, 15, 14, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.7);
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(20px);
+}
+
+.landing-root .landing-stat-card {
+  background: var(--landing-card);
+  border: 1px solid rgba(255, 107, 0, 0.2);
+  border-top: 3px solid var(--landing-orange);
+}
+
+.landing-root .landing-stat-value {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 3rem);
+  color: var(--landing-orange);
+  line-height: 1;
+}
+
+.landing-root .landing-stat-value--zero {
+  font-size: clamp(4rem, 12vw, 5.5rem);
+  color: var(--landing-red);
+}
+
+.landing-root .landing-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--landing-muted);
+}
+
+.landing-root .landing-section-rule {
+  height: 1px;
+  background: rgba(255, 107, 0, 0.3);
+  border: none;
+  margin: 0;
+}
+
+.landing-root .landing-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--landing-red);
+  animation: landing-pulse-dot 2s ease-in-out infinite;
+}
+
+.landing-root .landing-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 48px;
+  background: var(--landing-orange);
+  color: #000;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 0;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.landing-root .landing-cta-primary:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
 }

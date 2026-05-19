@@ -78,7 +78,7 @@ export function OpsSessionProvider({ children }: { children: ReactNode }) {
 
   const roleLabel = useMemo(() => {
     const roleName = ROLE_LABELS[session.role]
-    if (isDemoMode) return `Demo — ${roleName}`
+    if (isDemoMode) return roleName
     if (activeAddress) {
       const short = `${activeAddress.slice(0, 6)}…${activeAddress.slice(-4)}`
       return `${roleName} — ${short}`
@@ -118,10 +118,8 @@ export function OpsAuthGuard({ children }: { children: ReactNode }) {
       <div className="min-h-screen bg-bg-primary flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <p className="font-mono text-xs uppercase tracking-label text-text-tertiary">Access required</p>
-          <h1 className="font-serif text-2xl text-text-primary mt-3">Operations console</h1>
-          <p className="text-text-secondary mt-2 text-sm">
-            Connect institutional credentials or enter demonstration mode.
-          </p>
+          <h1 className="font-serif text-2xl text-text-primary mt-3">Sign in required</h1>
+          <p className="text-text-secondary mt-2 text-sm">Connect your wallet or continue from the access page.</p>
           <button
             type="button"
             onClick={() => navigate(ROUTES.access)}

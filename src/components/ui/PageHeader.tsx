@@ -3,25 +3,18 @@ import type { ReactNode } from 'react'
 interface PageHeaderProps {
   title: string
   description?: string
-  /** Segment after "Operations /" */
-  breadcrumb?: string
   actions?: ReactNode
 }
 
-export default function PageHeader({ title, description, breadcrumb, actions }: PageHeaderProps) {
+export default function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <header className="mb-8 pb-6 border-b border-border-subtle">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-label text-text-tertiary mb-2">
-            Operations / {breadcrumb ?? title}
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl text-text-primary leading-tight">{title}</h1>
-          {description ? (
-            <p className="mt-2 text-text-secondary max-w-3xl text-sm sm:text-base leading-relaxed">{description}</p>
-          ) : null}
+    <header className="mb-8 pb-5 border-b border-border-subtle">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="ops-page-title">{title}</h1>
+          {description ? <p className="ops-body mt-2 max-w-3xl">{description}</p> : null}
         </div>
-        {actions ? <div className="flex flex-wrap gap-2 shrink-0">{actions}</div> : null}
+        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
     </header>
   )

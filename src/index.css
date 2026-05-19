@@ -1,4 +1,5 @@
 @import './styles/tokens.css';
+@import './styles/ops-system.css';
 
 @tailwind base;
 @tailwind components;
@@ -18,8 +19,9 @@ body {
   margin: 0;
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter Tight', system-ui, -apple-system, sans-serif;
-  letter-spacing: -0.01em;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -29,9 +31,9 @@ body {
   h2,
   h3,
   h4 {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Sora', system-ui, sans-serif;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1.2;
     color: var(--text-primary);
   }
 
@@ -106,6 +108,25 @@ body {
   font-family: 'Inter Tight', system-ui, sans-serif;
 }
 
+/* Keep map zoom controls inside the map panel only */
+.map-ops-container {
+  isolation: isolate;
+}
+
+.map-ops-container .leaflet-control-container {
+  position: absolute;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.map-ops-container .leaflet-control {
+  pointer-events: auto;
+}
+
+.ops-main-shell .leaflet-control-container {
+  display: none;
+}
+
 /* Phase 2 — terminal log surface */
 .terminal-log {
   background: var(--bg-elevated);
@@ -115,12 +136,12 @@ body {
 
 /* Operations shell — warm charcoal canvas (matches landing), beside fixed sidebar */
 .ops-main-shell {
-  background: linear-gradient(
-    168deg,
-    #151c18 0%,
-    #1a2820 42%,
-    #18241f 100%
-  );
+  background: var(--bg-primary);
+}
+
+.ops-main-shell .landing-root h1,
+.ops-main-shell .landing-root h2 {
+  font-family: 'Instrument Serif', Georgia, serif;
 }
 
 @media (min-width: 1024px) {
