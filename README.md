@@ -408,35 +408,6 @@ Full guide: **[docs/DEPLOY.md](docs/DEPLOY.md)**
 
 ---
 
-## 5-minute judge demo
-
-### One phone + one laptop
-
-1. Open **Vercel URL** → **Enter Operations**  
-2. **Access** → **Continue with Pera** → scan QR → **Admin** account  
-3. **Active Events** → pick red/orange event → **Create Campaign** → sign  
-4. **Approvals** → switch Pera to **Approver 1** → Approve → switch to **Approver 2** → Approve  
-5. **Release & Proof** → Admin account → CSV:
-
-   ```csv
-   Ravi Kumar,WALLET_ADDRESS_1,5
-   Priya Sharma,WALLET_ADDRESS_2,5
-   ```
-
-   → **Disburse** → **Payment proof** → **Verify on blockchain** → **Download Report**  
-6. (Optional) Telegram `/status`, `/campaigns`
-
-### If something breaks
-
-| Problem | Fix |
-|---------|-----|
-| Create disabled | Connect admin wallet |
-| Approve missing | Wrong Pera account |
-| Disburse fails | `npm run fund:humanitarian` |
-| Telegram 409 | Only one `npm run services` instance |
-
----
-
 ## Project structure
 
 ```text
@@ -463,19 +434,6 @@ npx tsc --noEmit       # typecheck
 npm run verify:lora    # export Lora verification bundle
 npm run verify:deployment
 ```
-
----
-
-## Documentation index
-
-| Doc | Contents |
-|-----|----------|
-| [docs/SUBMISSION_GTM.md](docs/SUBMISSION_GTM.md) | **Google Form** copy-paste + GTM 1-pager |
-| [docs/DEPLOY.md](docs/DEPLOY.md) | Vercel + Render |
-| [docs/DEMO_WALLETS.md](docs/DEMO_WALLETS.md) | Approver addresses |
-| [docs/PRODUCT_STATUS.md](docs/PRODUCT_STATUS.md) | Full technical audit |
-| [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | AlgoBharat ecosystem map |
-| [AGENTS.md](AGENTS.md) | Algorand agent workflow |
 
 ---
 
