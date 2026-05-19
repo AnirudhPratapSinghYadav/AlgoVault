@@ -6,7 +6,7 @@
 [![Contracts](https://img.shields.io/badge/Contracts-Lora%20Verified-FF6B00?style=flat)](https://lora.algokit.io/testnet/application/762592323)
 [![Hackathon](https://img.shields.io/badge/AlgoBharat-Hack%20Series%203.0-blue?style=flat)](https://algorand.co/)
 
-> **Live demo:** Deploy your Vercel URL here · **Repo:** [github.com/AnirudhPratapSinghYadav/AlgoVault](https://github.com/AnirudhPratapSinghYadav/AlgoVault) · **Telegram:** [@AlgoVault_Guardian_bot](https://t.me/AlgoVault_Guardian_bot)
+> **Live demo:** https://hackalgo.vercel.app/ · **Repo:** [github.com/AnirudhPratapSinghYadav/AlgoVault](https://github.com/AnirudhPratapSinghYadav/AlgoVault) · **Telegram:** [@AlgoVault_Guardian_bot](https://t.me/AlgoVault_Guardian_bot)
 
 ---
 
